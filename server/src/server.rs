@@ -1,3 +1,5 @@
+use std::net::TcpListener;
+
 pub struct HTTPServer {
     ip_address: String,
 }
@@ -9,5 +11,19 @@ impl HTTPServer {
     }
 
     // This is a method which uses self reference
-    pub fn run(self) {}
+    pub fn run(self) {
+        print!("Server listening on {}", self.ip_address);
+        let listener = TcpListener::bind(&self.ip_address).unwrap();
+
+
+        loop {
+            let result = listener.accept();
+
+            if result.is_err(){
+                continue;
+            }
+
+            let (stream, address) = result.unwrap();
+        }
+    }
 }
