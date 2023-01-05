@@ -1,10 +1,5 @@
 fn main() {
 
-    //enums are represented as simple numbers in memory
-    let _get = Method::GET;
-    let _delete = Method::DELETE;
-    let _post = Method::POST;
-
     // The server should listen on localhost:8080 by default
     let server = HTTPServer::new("127.0.0.1:8080".to_string());
     server.run();
@@ -30,10 +25,12 @@ impl HTTPServer {
     }
 }
 
+// Options are a way to deal with the absence of a value.
+// (in our case, if we would pass no query string)
 struct HTTPRequest {
     path: String,
-    query_string: String,
     method: Method,
+    query_string: Option<String>,
 }
 
 enum Method {
