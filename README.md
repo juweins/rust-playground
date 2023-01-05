@@ -1,2 +1,2 @@
 # rust-playground
-My personal Snadbox for learning rust
+My personal Sandbox for learning rust
