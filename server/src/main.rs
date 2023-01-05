@@ -1,4 +1,5 @@
-use http::request::Request;
+use http::Method;
+use http::Request;
 use server::HTTPServer;
 
 mod server;
