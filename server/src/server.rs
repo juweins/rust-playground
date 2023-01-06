@@ -17,13 +17,14 @@ impl HTTPServer {
 
 
         loop {
-            let result = listener.accept();
-
-            if result.is_err(){
-                continue;
+            match listener.accept() {
+                Ok((stream, address)) => {
+                    //TODO: Implement functionality
+                }
+                Err(e) => {
+                    println!("Failed {}", e);
+                }
             }
-
-            let (stream, address) = result.unwrap();
         }
     }
 }
