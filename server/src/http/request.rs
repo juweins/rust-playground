@@ -1,4 +1,5 @@
 use super::method::Method;
+use std::str;
 use std::convert::TryFrom;
 use std::error::Error;
 use std::fmt::Display;
@@ -13,11 +14,14 @@ pub struct Request {
 }
 
 impl TryFrom<&[u8]> for Request {
-    type Error = String;
+    type Error = ParseError;
 
     // example incoming Request: GET /search?name=sometext&sort=1 HTTP/1.1
     fn try_from(buffer: &[u8]) -> Result<Self, Self::Error> {
-        unimplemented!()
+        match str::from_utf8(buffer) {
+            Ok(request) => {unimplemented!()},
+            Err(_) => {return Err(ParseError::InvalidEncoding)},
+        }
     }
 }
 
