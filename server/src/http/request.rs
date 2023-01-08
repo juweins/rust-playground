@@ -1,4 +1,11 @@
 use super::method::Method;
+use std::convert::TryFrom;
+use std::error::Error;
+use std::fmt::Display;
+use std::fmt::Debug;
+use std::fmt::Formatter;
+use std::fmt::Result as FmtResult;
+
 pub struct Request {
     path: String,
     method: Method,
@@ -13,3 +20,37 @@ impl TryFrom<&[u8]> for Request {
         unimplemented!()
     }
 }
+
+pub enum ParseError {
+     InvalidRequest,
+     InvalidEncoding,
+     InvalidProtocol,
+     InvalidMethod,
+}
+impl Display for ParseError {
+    fn fmt(&self, f: &mut Formatter) -> FmtResult {
+        write!(f, "{}", self.message())
+    }
+
+}
+
+impl Debug for ParseError {
+    fn fmt(&self, f: &mut Formatter) -> FmtResult {
+        write!(f, "{}", self.message())
+    }
+
+}
+
+impl ParseError {
+    fn message(&self) -> &str {
+        match self {
+            Self::InvalidRequest => "Invalid Request",
+            Self::InvalidEncoding => "Invalid Encoding",
+            Self::InvalidProtocol => "Invalid Protocol",
+            Self::InvalidMethod => "Invalid Method",
+        }
+
+    }
+}
+
+impl Error for ParseError {}
