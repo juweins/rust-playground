@@ -19,10 +19,37 @@ impl TryFrom<&[u8]> for Request {
     // example incoming Request: GET /search?name=sometext&sort=1 HTTP/1.1
     fn try_from(buffer: &[u8]) -> Result<Self, Self::Error> {
         match str::from_utf8(buffer) {
-            Ok(request) => {unimplemented!()},
+            Ok(request) => {
+
+                match parse_request_header(request) {
+                    Some(request) =>{ 
+                        unimplemented!();
+
+                    }
+                    None => { return Err(ParseError::InvalidRequest)
+                    }
+                }
+            },
             Err(_) => {return Err(ParseError::InvalidEncoding)},
         }
+
+
     }
+}
+
+// explode the received request string into its three components
+// example: GET src/some/index.html HTTP/1.1 -> ("GET", "src/some/index.html", "HTTP/1.1")
+fn parse_request_header(request: &str) -> Option<(&str, &str, &str)>{
+
+    // split returns an iterator object
+    let mut iterator = request.split_whitespace();
+
+    // unwrapping the request fragments
+    let method: &str = iterator.next().unwrap();
+    let path: &str = iterator.next().unwrap();
+    let protocol: &str = iterator.next().unwrap();
+
+    return Some((method, path, protocol));
 }
 
 pub enum ParseError {
