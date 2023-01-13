@@ -5,7 +5,7 @@
 // 
 */
 
-use super::method::Method;
+use super::method::{Method};
 use std::str;
 use std::convert::TryFrom;
 use std::error::Error;
@@ -29,7 +29,13 @@ impl TryFrom<&[u8]> for Request {
             Ok(request) => {
 
                 match parse_request_header(request) {
+                    // 0: Method, 1: Path 2: Protocol
                     Some(request) =>{ 
+                        // check if protocol can be handled by server
+                        if request.2 != "HTTP/1.1" {
+                            return Err(ParseError::InvalidProtocol);
+                        }            
+
                         unimplemented!();
                     }
                     None => { return Err(ParseError::InvalidRequest)
