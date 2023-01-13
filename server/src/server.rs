@@ -1,3 +1,11 @@
+/* This file contains the HTTP Server struct implementation.
+// On startup, main.rs calls the run() method of this file to
+// bind a TCPlistener on the IP-Address:Port
+// 
+// IP-Adress is passed during creation of HTTPServer instance.
+*/
+
+
 use crate::http::Request;
 use std::convert::TryFrom;
 use std::net::TcpListener;

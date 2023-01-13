@@ -1,3 +1,10 @@
+/* This file contains the incoming HTTP Request handling logic.
+//
+// The request is parsed by taking advantage of the iterator from split_whitespace()
+// By defining custom Error types, basic error handling is achieved.
+// 
+*/
+
 use super::method::Method;
 use std::str;
 use std::convert::TryFrom;
@@ -24,7 +31,6 @@ impl TryFrom<&[u8]> for Request {
                 match parse_request_header(request) {
                     Some(request) =>{ 
                         unimplemented!();
-
                     }
                     None => { return Err(ParseError::InvalidRequest)
                     }
