@@ -14,39 +14,49 @@ use std::fmt::{Display, Debug, Formatter};
 use std::fmt::Result as FmtResult;
 
 
-pub struct Request {
-    path: String,
+pub struct Request<'buffer> {
+    path: &'buffer str,
     method: Method,
-    query_string: Option<String>,
+    query: Option<&'buffer str>,
 }
 
-impl TryFrom<&[u8]> for Request {
+impl<'buffer> TryFrom<&'buffer[u8]> for Request<'buffer> {
     type Error = ParseError;
 
     // example incoming Request: GET /search?name=sometext&sort=1 HTTP/1.1
-    fn try_from(buffer: &[u8]) -> Result<Self, Self::Error> {
-        match str::from_utf8(buffer) {
-            Ok(request) => {
-
+    fn try_from(buffer: &'buffer [u8]) -> Result<Self, Self::Error> {
+        let request = str::from_utf8(buffer)?; 
                 match parse_request_header(request) {
                     // 0: Method, 1: Path 2: Protocol
                     Some(request) =>{ 
+                        let method = request.0;
                         // check if protocol can be handled by server
                         if request.2 != "HTTP/1.1" {
                             return Err(ParseError::InvalidProtocol);
                         }            
                         // parse method into enum method type
                         let method: Method = request.0.parse()?;
-                        unimplemented!();
+                        
+                        // explode query string
+                        let mut path = request.1;
+                        let mut query = None;
+
+                        if let Some(index) = path.find("?") {
+                            // since the "?" is utf8 encoded, adding one byte is considered safe
+                            query = Some(&path[index + 1..]);
+                            path = &path[..index];
+
+                        }
+                        Ok(Self {
+                            path,
+                            query,
+                            method,
+                        })
                     }
-                    None => { return Err(ParseError::InvalidRequest)
+
+                    None => { return Err(ParseError::InvalidRequest);
                     }
                 }
-            },
-            Err(_) => {return Err(ParseError::InvalidEncoding)},
-        }
-
-
     }
 }
 
