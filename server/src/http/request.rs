@@ -6,6 +6,7 @@
 */
 
 use super::method::{Method, MethodError};
+use super::QueryString;
 use std::str;
 use std::str::Utf8Error;
 use std::convert::TryFrom;
@@ -17,7 +18,7 @@ use std::fmt::Result as FmtResult;
 pub struct Request<'buffer> {
     path: &'buffer str,
     method: Method,
-    query: Option<&'buffer str>,
+    query: Option<QueryString<'buffer>>,
 }
 
 impl<'buffer> TryFrom<&'buffer[u8]> for Request<'buffer> {
@@ -43,7 +44,7 @@ impl<'buffer> TryFrom<&'buffer[u8]> for Request<'buffer> {
 
                         if let Some(index) = path.find("?") {
                             // since the "?" is utf8 encoded, adding one byte is considered safe
-                            query = Some(&path[index + 1..]);
+                            query = Some(QueryString::from(&path[index + 1..]));
                             path = &path[..index];
 
                         }
