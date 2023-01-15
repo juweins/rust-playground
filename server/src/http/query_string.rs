@@ -1,9 +1,11 @@
 use std::{collections::HashMap, hash::Hash};
 
+#[derive(Debug)]
 pub struct QueryString<'buffer> {
     data: HashMap<&'buffer str, Value<'buffer>>
 }
 
+#[derive(Debug)]
 pub enum Value<'buffer> {
     Single(&'buffer str),
     Multiple(Vec<&'buffer str>), // this is a heap allocated array
@@ -43,8 +45,7 @@ impl <'buffer> From<&'buffer str> for QueryString<'buffer> {
         }
 
 
-        QueryString{data};
+        QueryString{data}
 
-        unimplemented!()
     }
 }

@@ -14,7 +14,7 @@ use std::error::Error;
 use std::fmt::{Display, Debug, Formatter};
 use std::fmt::Result as FmtResult;
 
-
+#[derive(Debug)]
 pub struct Request<'buffer> {
     path: &'buffer str,
     method: Method,
@@ -73,7 +73,7 @@ fn parse_request_header(request: &str) -> Option<(&str, &str, &str)>{
     let path: &str = iterator.next().unwrap();
     let protocol: &str = iterator.next().unwrap();
 
-    return Some((method, path, protocol));
+    return Some((method, path, protocol))
 }
 
 pub enum ParseError {
@@ -82,6 +82,7 @@ pub enum ParseError {
      InvalidProtocol,
      InvalidMethod,
 }
+
 impl Display for ParseError {
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         write!(f, "{}", self.message())
