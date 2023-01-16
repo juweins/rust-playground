@@ -1,5 +1,7 @@
-use std::fmt::{Display, Formatter, Result as FmtResult};
 use super::StatusCode;
+use std::fmt::{Display, Formatter, Result as FmtResult};
+use std::io::{Write, Result as IoResult};
+use std::net::TcpStream;
 
 #[derive(Debug)]
 pub struct Response {
@@ -11,6 +13,22 @@ impl Response {
     pub fn new(status_code: StatusCode, body: Option<String>) -> Self {
         Response{status_code, body}
     }
+
+    // sends the response by using static dispatched Write trait
+    pub fn send(&self, stream: &mut impl Write) -> IoResult<()> {
+        let body = match &self.body {
+            Some(b) => b,
+            None => "",
+        };
+
+        write!(
+            stream, 
+            "HTTP/1.1 {} {}\r\n\r\n{}", 
+            self.status_code, 
+            self.status_code.reason_phrase(), 
+            body
+        )
+    }
 }
 
 impl Display for Response {
@@ -21,7 +39,8 @@ impl Display for Response {
             None => "",
         };
 
-        write!(f, 
+        write!(
+            f, 
             "HTTP/1.1 {} {}\r\n\r\n{}", 
             self.status_code, 
             self.status_code.reason_phrase(), 

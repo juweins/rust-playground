@@ -6,11 +6,23 @@
 */
 
 
-use crate::http::{Response, Request, StatusCode};
+use crate::http::{Response, Request, StatusCode, ParseError};
 use std::convert::TryFrom;
 use std::net::TcpListener;
 use std::io::{Read, Write};
 
+
+pub trait Handler {
+
+    fn handle_request(&mut self, request: &Request) -> Response {
+        unimplemented!()
+    }
+
+    fn handle_bad_request(&mut self, e: &ParseError) -> Response{
+        println!("Failed to parse request: {}", e);
+        Response::new(StatusCode::BadRequest, None)
+    }
+}
 pub struct HTTPServer {
     ip_address: String,
 }
@@ -22,7 +34,7 @@ impl HTTPServer {
     }
 
     // This is a method which uses self reference
-    pub fn run(self) {
+    pub fn run(self, mut handler: impl Handler) {
         print!("Server listening on {}", self.ip_address);
         let listener = TcpListener::bind(&self.ip_address).unwrap();
 
@@ -37,17 +49,12 @@ impl HTTPServer {
                             println!("Received request: {}", String::from_utf8_lossy(&buffer));
 
                             // parse buffer to Request
-                            match Request::try_from(&buffer[..]) {
-                                Ok(request) => {
-                                    dbg!(request);
-                                    // Serving hardcoded html as a placeholder
-                                    let response = Response::new(StatusCode::Ok, Some("<h1>Hello RustWorld!</h1>".to_string()));
-                                    write!(stream, "{}", response);
-                                }
-                                Err(e) => {
-                                    println!("Failed parsing request: {}", e)
-                                }
-
+                            let response = match Request::try_from(&buffer[..]) {
+                                Ok(request) => handler.handle_request(&request),
+                                Err(e) => handler.handle_bad_request(&e),
+                            };
+                            if let Err(e) = response.send(&mut stream){
+                                println!("Failed sending response {}", e);
                             }
 
                         }
