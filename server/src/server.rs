@@ -6,10 +6,10 @@
 */
 
 
-use crate::http::Request;
+use crate::http::{Response, Request, StatusCode};
 use std::convert::TryFrom;
 use std::net::TcpListener;
-use std::io::Read;
+use std::io::{Read, Write};
 
 pub struct HTTPServer {
     ip_address: String,
@@ -26,8 +26,9 @@ impl HTTPServer {
         print!("Server listening on {}", self.ip_address);
         let listener = TcpListener::bind(&self.ip_address).unwrap();
 
-
+        // Infinite looping to keep server listening 
         loop {
+            // accept valid, incoming TCP strems
             match listener.accept() {
                 Ok((mut stream, address)) => {
                     let mut buffer = [0u8; 1024];
@@ -35,7 +36,19 @@ impl HTTPServer {
                         Ok(_) => {
                             println!("Received request: {}", String::from_utf8_lossy(&buffer));
 
-                            Request::try_from(&buffer[..]);
+                            // parse buffer to Request
+                            match Request::try_from(&buffer[..]) {
+                                Ok(request) => {
+                                    dbg!(request);
+                                    // Serving hardcoded html as a placeholder
+                                    let response = Response::new(StatusCode::Ok, Some("<h1>Hello RustWorld!</h1>".to_string()));
+                                    write!(stream, "{}", response);
+                                }
+                                Err(e) => {
+                                    println!("Failed parsing request: {}", e)
+                                }
+
+                            }
 
                         }
                         Err(e) => {

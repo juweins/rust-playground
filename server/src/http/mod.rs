@@ -1,6 +1,7 @@
 // expose submodules directly
 pub use method::Method;
 pub use request::Request;
+pub use response::Response;
 pub use request::ParseError;
 pub use query_string::{QueryString, Value as QueryStringValue};
 pub use status_code::StatusCode;
