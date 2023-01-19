@@ -1,78 +1,103 @@
 // This is my solution for the coding exercise
 
-use std::ops::Deref;
+use rand::Rng;
 
 fn main(){
 
-// Create car color array
+// create car array with available colors
 let mut colors = ["blue", "green", "red", "silver"];
-let mut engine = Transmission::Manual;
+
+// cast length of colors array to an integer
+let colors_len = colors.len() as u32;
 
 // We have orders for three new cars!
 // We'll declare a mutable car variable and reuse it for all the cars
+    // Create a new random configuration for each car
+    // example: [2, 1, 0, 3000] = [color, transmission, convertible, mileage]
+    // input: [color, mileage] (transmission, convertible) are fixed
 
-    let mut car = car_factory(String::from(colors[2]), engine, false, car_quality(0));
 
-    engine = Transmission::SemiAuto;
-    car = car_factory(String::from(colors[3]), engine, true, car_quality(565));
+    // Create new cars with random specs based on user input
 
-    engine = Transmission::Automatic;
-    car = car_factory(String::from(colors[0]), engine, false, car_quality(3000));
+    //get user input from command line
+    let mut input = String::new();
+    println!("How many cars do you want to build?");
+
+    std::io::stdin().read_line(&mut input).expect("Failed to read line");
+    let mut input: u32 = input.trim().parse().expect("Please provide the amount of cars (Integer)!");
+
+
+    let mut configuration = random_configuration(colors_len, 10000);
+
+    let mut color = String::from(colors[configuration.0 as usize]);
+    let mut engine = configuration.1;
+    let mut convertible = configuration.2;
+    let mut age = car_quality(configuration.3);
+
+    while input > 0 {
+        let car = car_factory(color, engine, convertible, age);
+        println!("Car is ready!");
+        configuration = random_configuration(colors_len, 10000);
+        color = String::from(colors[configuration.0 as usize]);
+        engine = configuration.1;
+        convertible = configuration.2;
+        age = car_quality(configuration.3);
+        input -= 1;
+    }
+
+    
 }
 
-
+#[derive(PartialEq, Debug)]
 struct Car {
     color: String,
     transmission: Transmission,
-    convertible: bool,
-    mileage: age,
+    convertible: Convertible,
+    mileage: Age,
 }
 
-type age = (Age, u32);
+type Age = (Condition, u32);
 
 #[derive(PartialEq, Debug)]
-// Declare enum for Car transmission type
 enum Transmission {
-    // todo!("Fix enum definition so code compiles");
     Manual,
     SemiAuto,
     Automatic,
 }
 
 #[derive(PartialEq, Debug)]
-enum Age {
+enum Condition {
     New,
     Used,
+}
+
+#[derive(PartialEq, Debug)]
+enum Convertible {
+    HardTop,
+    SoftTop,
 }
 
 // Build a "Car" by using values from the input arguments
 // - Color of car (String)
 // - Transmission type (enum value)
 // - Convertible (boolean, true if car is a convertible)
-fn car_factory(color: String, transmission: Transmission, convertible: bool, condition: age) -> Car {
-
+fn car_factory(color: String, transmission: Transmission, convertible: Convertible, condition: Age) -> Car {
 
     // Show details about car order
     // - Check if order is for Used or New car, then check the roof type 
     // - Print details for New or Used car based on roof type
-    if condition.0 == Age::Used {
-        if convertible == true {
-            println!("Prepare a used car: {:?}, {}, Hard top, {} miles\n", transmission, color, condition.1); 
-        } else {
-            println!("Prepare a used car: {:?}, {}, Soft top, {} miles\n", transmission, color, condition.1);
-        }
-
+    if condition.0 == Condition::Used {
+        print!("Prepare a used car: {:?}, {:?}, {}, {} miles\n", transmission, convertible, color, condition.1);
     } else {
-        println!("Build a new car: {:?}, {}, Hard Top {}, {} miles\n", transmission, color, convertible, condition.1);
+        print!("Build a new car: {:?}, {:?}, {}, {} miles\n", transmission, convertible, color, condition.1);
     }
              
-
     // Use the values of the input arguments
     // All new cars always have zero mileage
     let car = Car {
         color: String::from(&color),
         transmission: Transmission::from(transmission),
-        convertible: convertible,
+        convertible: Convertible::from(convertible),
         mileage: condition,
     };
 
@@ -84,16 +109,50 @@ fn car_factory(color: String, transmission: Transmission, convertible: bool, con
 // - miles (u32)
 // Create a tuple for the car quality with the Age ("New" or "Used") and mileage
 // Return a tuple with the arrow `->` syntax
-fn car_quality (miles: u32) -> (Age, u32) {
+fn car_quality (miles: u32) -> (Condition, u32) {
 
-    let mut condition = Age::New;
+    let mut condition = Condition::New;
     // Check milage and derive Age from it
     if miles > 0 {
-        condition = Age::Used;
+        condition = Condition::Used;
     }
     // Declare and initialize the return tuple value
     // For a new car, set the miles to 0
-    let quality: (Age, u32) = (condition, miles);
+    let quality: (Condition, u32) = (condition, miles);
     // Return the completed tuple to the caller
     quality
+}
+
+// Function to generate an array of random integers for car attributes
+// - max_color (u32)
+// - max_milage (u32)
+// return a tuple with random configuration
+
+fn random_configuration(max_color: u32, max_milage: u32) -> (u32, Transmission, Convertible, u32) {
+    let mut rng = rand::thread_rng();
+
+    // generates random properties for: color, transmission, mileage
+    let random_numbers = [
+        rng.gen_range(0..max_color), 
+        rng.gen_range(0..3), 
+        rng.gen_range(0..max_milage)];
+    
+    // generates random property for convertible
+    let random_boolean = rng.gen_bool(0.5);
+
+    // convert integer to enum value for transmission
+    let transmission_type = match random_numbers[1] {
+        0 => Transmission::Manual,
+        1 => Transmission::SemiAuto,
+        2 => Transmission::Automatic,
+        _ => Transmission::Manual,
+    };
+
+    // convert integer to enum value for convertible
+    let roof_type = match random_boolean {
+        true => Convertible::HardTop,
+        false => Convertible::SoftTop,
+    };
+
+    (random_numbers[0], transmission_type, roof_type, random_numbers[2])
 }
