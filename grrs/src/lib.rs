@@ -44,3 +44,22 @@ pub fn print_result(count: u8, pattern: &str, mut writer: impl std::io::Write) {
         }
     }
 }
+
+// Tests
+// - search_file_match: Test if the search_file function returns the correct result
+// - search_file_no_match: Test if the search_file function returns the correct result
+#[test]
+fn search_file_match() {
+
+    let mut result: Vec<u8> = Vec::new();
+    search_file(&PathBuf::from("examples/example.txt"), "Hello", &mut result);
+    assert_eq!(result, b"Hello\n");
+}
+
+#[test]
+fn search_file_no_match() {
+
+    let mut result: Vec<u8> = Vec::new();
+    search_file(&PathBuf::from("examples/example.txt"), "Servus", &mut result);
+    assert_eq!(result, b"");
+}
