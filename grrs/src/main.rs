@@ -1,7 +1,10 @@
+#[warn(unused_imports)]
+
 use clap::Parser;
-use std::io::{BufRead, Write};
 use std::path::PathBuf;
 use log::{info, warn, error};
+
+use grrs::{search_file, print_result};
 
 
 // Command line arguments
@@ -28,51 +31,6 @@ fn main() {
     // Print the result
     print_result(count, &args.pattern, &mut std::io::stdout())
 }
-
-// Takes a path and a pattern and searches for the pattern in the file
-// - path: Path to the file to search
-// - pattern: Pattern to search for
-fn search_file(file: &PathBuf, pattern: &str, mut writer: impl std::io::Write) -> (u8) {
-    info!("Searching for {} in file {}", pattern, file.display());
-
-    let mut result = std::io::BufReader::new(std::fs::File::open(file).unwrap());
-    let mut line = String::new();
-
-    // Count the number of matches (for logging)
-    let mut count = 0;
-
-    // Read each line and check if it contains the pattern
-    while result.read_line(&mut line).unwrap() > 0 {
-        if line.contains(pattern) {
-            match write!(writer, "{}", line) {
-                Ok(_) => (),
-                Err(e) => error!("Error writing to stdout: {}", e),
-            }
-            count += 1;
-        }
-        line.clear();
-    }
-    count
-    // Check if there are any matches and print
-    
-}
-
-fn print_result(count: u8, pattern: &str, mut writer: impl std::io::Write) {
-    if count == 0 {
-        warn!("No matches found for {}", pattern);
-        match writeln!(writer, "No matches found for {}", pattern) {
-            Ok(_) => (),
-            Err(e) => error!("Error writing to stdout: {}", e),
-        }
-    } else {
-        info!("Found {} matches for {}", count, pattern);
-        match writeln!(writer, "Found {} matches for {}", count, pattern) {
-            Ok(_) => (),
-            Err(e) => error!("Error writing to stdout: {}", e),
-        }
-    }
-}
-
 
 // Tests
 // - search_file_match: Test if the search_file function returns the correct result
