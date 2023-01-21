@@ -1,7 +1,7 @@
 #[warn(unused_imports)]
 
 use clap::Parser;
-use std::{path::PathBuf, sync::Arc, io::{stderr, Write}, fmt::Error};
+use std::io::{Write};
 use log::{info, warn, error};
 
 use grrs::{search_file, print_result};
@@ -12,7 +12,12 @@ use grrs::{search_file, print_result};
 // - path: Path to the file to search
 #[derive(Parser)]
 struct Cli {
+    /// Pattern to search for in file,
+    /// e.g. amici
     pattern: String,
+
+    /// Path to the file to search,
+    /// e.g. example/example.txt
     path: std::path::PathBuf,
 }
 
