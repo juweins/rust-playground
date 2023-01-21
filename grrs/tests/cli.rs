@@ -1,9 +1,7 @@
-use assert_cmd::{prelude::*, assert}; // Add methods on commands
-use assert_fs::prelude::*; use grrs::search_file;
-// Used for writing files
-use predicates::prelude::*; // Used for writing assertions
-use std::{process::Command}; // Run programs
-
+use assert_cmd::prelude::*;
+use assert_fs::prelude::*;
+use predicates::prelude::*;
+use std::{process::Command};
 
 // Test if the program exits with an error if no arguments are provided
 // - Create a new Command

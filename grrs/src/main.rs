@@ -1,8 +1,6 @@
-#[warn(unused_imports)]
-
 use clap::Parser;
 use std::io::{Write};
-use log::{info, warn, error};
+use log::{info, error};
 
 use grrs::{search_file, print_result};
 

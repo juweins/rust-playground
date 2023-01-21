@@ -1,7 +1,5 @@
-use std::fmt::format;
 use std::io::{BufRead, Write};
 use std::path::PathBuf;
-use std::sync::Arc;
 use log::{info, warn, error};
 use lipsum::lipsum;
 
