@@ -1,5 +1,39 @@
-Hello
-Hi
-Greetings
-Bye
-Ciao
+This text has been generated using lipsum crate:
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore disputandum putant.
+Sed ut iis bonis erigimur, quae expectamus, sic laetamur iis, quae et terroribus cupiditatibusque detractis et omnium falsarum opinionum temeritate derepta certissimam se nobis ducem praebeat ad voluptatem.
+Sapientia enim est una, quae maestitiam pellat ex animis, quae nos a libidinum impetu et a falsis initiis profecta vera esse non possunt et, si essent vera, nihil afferrent, quo iucundius, id est corpora individua propter soliditatem, censet in infinito inani, in quo nihil posset fieri minus; ita effici complexiones et copulationes et adhaesiones atomorum inter se, ex quo intellegitur nec intemperantiam propter se esse expetendam et dolorem ipsum per se esse expetendam et insipientiam propter molestias esse fugiendam?
+Eademque ratione ne temperantiam quidem propter se expetendam esse dicemus, sed quia pacem animis afferat et eos quasi concordia quadam placet ac leniat.
+Temperantia est enim, quod tibi parum videtur eruditus, ea causa est, quod huc possit, quod melius sit, accedere?
+Statue contra aliquem confectum tantis animi corporisque doloribus, quanti in hominem maximi cadere possunt, nulla spe proposita fore levius aliquando, nulla praeterea neque praesenti nec expectata voluptate, quid eo miserius dici aut fingi potest?
+Quodsi vita doloribus referta maxime fugienda est, summum bonum in voluptate aut a voluptate aut in voluptate est.
+Extremum autem esse bonorum voluptatem ex hoc facillime perspici potest: Constituamus aliquem magnis, multis, perpetuis fruentem et animo et corpore voluptatibus nullo dolore nec impediente nec inpendente, quem tandem hoc statu praestabiliorem aut magis expetendum possimus dicere?
+Inesse enim necesse est in quo a nobis philosophia defensa et collaudata est, cum esset accusata et vituperata ab Hortensio.
+Qui liber cum et mortem contemnit, qua qui utuntur, benivolentiam sibi conciliant et, quod aptissimum est ad cognitionem omnium, regula, ad quam omnia iudicia rerum dirigentur, numquam ullius oratione victi sententia desistemus.
+Nisi autem rerum natura duo quaerenda sint, unum, quae materia sit, ex qua quaeque res efficiatur, alterum, quae vis sit, quae quidque efficiat, de materia disseruerunt, vim et causam efficiendi reliquerunt.
+Sed hoc commune vitium, illae Epicuri propriae ruinae: censet enim eadem illa individua et solida corpora ferri deorsum suo pondere ad lineam, hunc naturalem esse omnium corporum motum.
+Deinde ibidem homo acutus, cum illud ocurreret, si omnia dixi hausta e fonte naturae, si tota oratio nostra omnem sibi fidem sensibus confirmat, id est quo melius viveremus, eas ergo artes persequeretur, vivendi artem tantam tamque et operosam et perinde fructuosam relinqueret?
+Non ergo Epicurus ineruditus, sed ii indocti, qui, quae pueros non didicisse turpe est, ea putant usque ad senectutem esse discenda.
+Quae cum dixissem, magis ut illum provocarem quam ut ipse constituit, e regione inferiorem locum petentium sine causa eripuit atomis nec tamen id, cuius causa haec finxerat, assecutus est.
+Nam si omnes atomi declinabunt, nullae umquam cohaerescent, sive aliae declinabunt, aliae suo nutu recte ferentur, primum erit hoc quasi, provincias atomis dare, quae recte, quae oblique ferantur, deinde eadem illa constituto veri a falso distinctio traditur.
+Restat locus huic disputationi vel maxime necessarius de amicitia, quam, si voluptas esset bonum, fuisse desideraturam.
+Idcirco enim non desideraret, quia, quod dolore caret, id in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+Excepteur sint occaecat cupidatat non proident, sunt in eadem causa sunt, qua ante quam nati, et ad tranquillitatem ferant, quid est cur verear, ne ad eam non possim accommodare Torquatos nostros?
+Quos tu paulo ante collegi, abest plurimum et, cum stultorum vitam cum sua comparat, magna afficitur voluptate.
+Dolores autem si qui incurrunt, numquam vim tantam habent, ut non plus voluptatum habeat quam dolorum.
+Nam et complectitur verbis, quod vult, et dicit plane, quod intellegam; et tamen ego a philosopho, si afferat eloquentiam, non asperner, si non habeat, non admodum indoctis, totum hoc displicet philosophari.
+Quidam autem non tam id reprehendunt, si remissius agatur, sed tantum studium tamque multam operam ponendam in eo ipso parum vidit, deinde hoc quoque alienum; nam ante Aristippus, et ille melius.
+Addidisti ad extremum etiam indoctum fuisse.
+Fieri, inquam, Triari, nullo pacto potest, ut non modo non impediri rationem amicitiae, si summum bonum diceret, primum in eo essent.
+Quae cum tota res (est) ficta pueriliter, tum ne efficit quidem, quod vult.
+Nam et praeterita et futura.
+Ut enim medicorum scientiam non ipsius artis, sed bonae valetudinis causa probamus, et gubernatoris ars, quia bene navigandi rationem habet, utilitate, non arte laudatur, sic sapientia, quae ars vivendi putanda est, non satis politus iis artibus, quas qui tenent, eruditi appellantur -- aut ne deterruisset alios a studiis.
+Quamquam te quidem video esse multos, sed imperitos --, quamquam autem et praeterita grate meminit et praesentibus ita potitur, ut animadvertat quanta sint ea quamque iucunda, neque pendet ex futuris, sed expectat illa, fruitur praesentibus ab iisque M.
+Brutus dissentiet -- quod Graeci telos nominant --, quod ipsum nullam ad aliam rem, ad id omnia referri oporteat, ipsum autem nusquam.
+Hoc Epicurus in voluptate ponit, quod summum bonum in voluptate ponit, quod summum bonum esse vult, summumque malum dolorem, idque instituit docere sic: Omne animal, simul atque natum sit, voluptatem appetere eaque gaudere ut summo bono, dolorem aspernari ut summum malum et, quantum possit, a se ipse dissidens secumque discordans gustare partem ullam liquidae voluptatis et liberae potest.
+Atqui pugnantibus et contrariis studiis consiliisque semper utens nihil quieti videre, nihil tranquilli potest.
+Quodsi corporis gravioribus morbis vitae iucunditas impeditur, quanto magis animi morbis impediri necesse est!
+Animi autem morbi sunt cupiditates inmensae et inanes divitiarum, gloriae, dominationis, libidinosarum etiam voluptatum.
+Accedunt aegritudines, molestiae, maerores, qui exedunt animos conficiuntque curis hominum non intellegentium nihil dolendum esse animo, quod sit a dolore corporis praesenti futurove seiunctum.
+Nec vero hoc oratione solum, sed multo etiam magis, quod, cuius in mente consedit, hoc ipso, quod adest, turbulenta est; si vero molita quippiam est, quamvis occulte fecerit, numquam tamen id volunt fieri, difficilem quandam temperantiam postulant in eo, quod semel admissum coerceri reprimique non potest, ut non dicas, quid non probes eius, a quo dissentias.
+Quid enim me prohiberet Epicureum esse, si probarem, quae ille.
