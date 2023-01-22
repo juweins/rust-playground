@@ -71,13 +71,29 @@ pub fn generate_sample_file() {
 
     file.write_all(lipsum.as_bytes()).unwrap();
 }
+
+// check if output is set
+// - If output is set, set Writer to output file
+pub fn check_output(output: &Option<PathBuf>) -> bool {
+    if let Some(output) = output {
+        info!("Output file set to {}", output.display());
+        true
+    } else {
+        info!("Output file not set");
+        false
+    }
+}
     
 
 // Tests
 // - search_file_match: Test if the search_file function returns the correct result
 // - search_file_no_match: Test if the search_file function returns the correct result
+// ----------------------
 // - print_result_match: Test if the print_result function returns the correct result
 // - print_result_no_match: Test if the print_result function returns the correct result
+// ----------------------
+// - check_output_true: Test if the check_output function returns true
+// - check_output_false: Test if the check_output function returns false
 // ----------------------
 // TODO: Find a way to make the search_file_match test more readable
 #[test]
@@ -111,4 +127,14 @@ fn print_result_no_match() {
     let mut result: Vec<u8> = Vec::new();
     print_result(0, "rustacean", &mut result);
     assert_eq!(result, b"No matches found for rustacean\n");
+}
+
+#[test]
+fn check_output_true() {
+    assert_eq!(check_output(&Some(PathBuf::from("examples/example.txt"))), true);
+}
+
+#[test]
+fn check_output_false() {
+    assert_eq!(check_output(&None), false);
 }

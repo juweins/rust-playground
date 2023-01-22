@@ -1,8 +1,8 @@
 use clap::Parser;
-use std::io::{Write};
+use std::io::Write;
 use log::{info, error};
 
-use grrs::{search_file, print_result};
+use grrs::{search_file, print_result, check_output};
 
 
 // Command line arguments
@@ -10,6 +10,7 @@ use grrs::{search_file, print_result};
 // - path: Path to the file to search
 #[derive(Parser)]
 struct Cli {
+
     /// Pattern to search for in file,
     /// e.g. amici
     pattern: String,
@@ -17,7 +18,14 @@ struct Cli {
     /// Path to the file to search,
     /// e.g. example/example.txt
     path: std::path::PathBuf,
+
+    /// Write the output to a file
+    /// e.g. output.txt
+    #[clap(short, long)]
+    output: Option<std::path::PathBuf>,
+
 }
+
 
 // Main function
 // - Parses the command line arguments
@@ -27,6 +35,9 @@ fn main() {
     // Initialize
     let args = Cli::parse();
     env_logger::init();
+
+    // Count for number of matches
+    let mut count = 0;
 
     // check pattern is empty
     // - If pattern is empty, raise error with message
@@ -40,8 +51,19 @@ fn main() {
         }
     }
 
-    let count = search_file(&args.path, &args.pattern, &mut std::io::stdout());
+    // check if output flag is set
+    let save_output = check_output(&args.output);
+
+    if save_output {
+        // create a file with specified name
+        // TODO: How to handle highligting in file?
+        let file = std::fs::File::create(&args.output.unwrap()).unwrap();
+        count = search_file(&args.path, &args.pattern, &file);
+    } else {
+        count = search_file(&args.path, &args.pattern, &mut std::io::stdout());
+    }
 
     // Print the result
-    print_result(count, &args.pattern, &mut std::io::stdout())
+    print_result(count, &args.pattern, &mut std::io::stdout());
+
 }
