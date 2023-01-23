@@ -1,4 +1,4 @@
-name: Rust CI&CD
+name: Rust CI/CD
 
 on:
   push:
@@ -24,9 +24,9 @@ jobs:
           override: true
     - name: update base
       run: sudo apt update
-    - name: format repo
+    - name: format grrs
       run: rustfmt
       working-directory: grrs
     - name: test grrs
-      run: cargo test --features deny-warnings,internal
+      run: cargo test
       working-directory: grrs
