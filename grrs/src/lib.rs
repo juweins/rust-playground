@@ -131,7 +131,7 @@ fn search_file_match() {
 
     let mut result: Vec<u8> = Vec::new();
     let count = search_file(&PathBuf::from("examples/example.txt"), "This",false, &mut result);
-    assert_eq!(result, b"\x1b[1;31m1\x1b[0m: \x1b[1;31mThis\x1b[0m text has been generated using lipsum crate:\n");
+    assert_eq!(result, b"\x1b[1;31m1\x1b[0m: \x1b[1;31mThis\x1b[0m text has been generated using lipsum crate:\n\n");
     assert_eq!(count, 1);
 }
 
