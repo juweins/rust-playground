@@ -22,3 +22,11 @@ jobs:
           profile: minimal
           components: clippy, rustfmt
           override: true
+    - name: update base
+      run: sudo apt update
+    - name: format repo
+      run: rustfmt
+      working-directory: grrs
+    - name: test grrs
+      run: cargo test --features deny-warnings,internal
+      working-directory: grrs
