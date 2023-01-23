@@ -6,7 +6,9 @@ use lipsum::lipsum;
 // Takes a path and a pattern and searches for the pattern in the file
 // - path: Path to the file to search
 // - pattern: Pattern to search for
-pub fn search_file(file: &PathBuf, pattern: &str, mut writer: impl std::io::Write) -> u8 {
+// - wildcards: If flag is set (true), the pattern will be handled as a wildcard
+// TODO: Find a way to suppress word fragment highlighting in wildcards mode
+pub fn search_file(file: &PathBuf, pattern: &str,wildcards: bool, mut writer: impl std::io::Write) -> u8 {
     info!("Searching for {} in file {}", pattern, file.display());
 
     let mut result = std::io::BufReader::new(std::fs::File::open(file).unwrap());
@@ -22,15 +24,31 @@ pub fn search_file(file: &PathBuf, pattern: &str, mut writer: impl std::io::Writ
     // - If it does, write it to the writer and attach line number and increase count
     while result.read_line(&mut line).unwrap() > 0 {
         line_number += 1;
-        if line.contains(pattern) {
-            
-            // Highlight the matching line number and pattern (red)
-            let line = line.replace(pattern, &format!("\x1b[1;31m{}\x1b[0m", pattern));
-            match write!(writer, "{}: {}", &format!("\x1b[1;31m{}\x1b[0m", line_number), line) {
-                Ok(_) => (),
-                Err(e) => error!("Error writing to stdout: {}", e),
+        // search each word in the line for the pattern
+        for word in line.split_whitespace() {
+            // If wildcards are enabled, check if the word contains the pattern
+            if wildcards == true {
+                if word.contains(pattern) == true {
+                    pattern_count += 1;
+                    // Highlight the matching line number and pattern (red)
+                    let line = line.replace(pattern, &format!("\x1b[1;31m{}\x1b[0m", pattern));
+                    match writeln!(writer, "{}: {}", &format!("\x1b[1;31m{}\x1b[0m", line_number), line) {
+                        Ok(_) => (),
+                        Err(e) => error!("Error writing: {}", e),
+                    }
+                }
+            // If wildcards are not enabled, check if the word is equal to the pattern
+            } else if wildcards == false{
+                if word.eq(pattern) {
+                    // TODO: Suppress subsequent word fragment highlighting in match
+                    let line = line.replace(word, &format!("\x1b[1;31m{}\x1b[0m", word));
+                    match writeln!(writer, "{}: {}", &format!("\x1b[1;31m{}\x1b[0m", line_number), line) {
+                        Ok(_) => (),
+                        Err(e) => error!("Error writing: {}", e),
+                    }
+                    pattern_count += 1;
+                }
             }
-            pattern_count += 1;
         }
         line.clear();
     }
@@ -83,6 +101,18 @@ pub fn check_output(output: &Option<PathBuf>) -> bool {
         false
     }
 }
+
+// check if wildcards are set
+// - If wildcards are set, set wildcards to true
+pub fn check_wildcards(wildcards: &Option<bool>) -> bool {
+    if let Some(wildcards) = wildcards {
+        info!("Wildcards set to {}", wildcards);
+        *wildcards
+    } else {
+        info!("Wildcards not set");
+        false
+    }
+}
     
 
 // Tests
@@ -100,7 +130,7 @@ pub fn check_output(output: &Option<PathBuf>) -> bool {
 fn search_file_match() {
 
     let mut result: Vec<u8> = Vec::new();
-    let count = search_file(&PathBuf::from("examples/example.txt"), "This", &mut result);
+    let count = search_file(&PathBuf::from("examples/example.txt"), "This",false, &mut result);
     assert_eq!(result, b"\x1b[1;31m1\x1b[0m: \x1b[1;31mThis\x1b[0m text has been generated using lipsum crate:\n");
     assert_eq!(count, 1);
 }
@@ -109,7 +139,7 @@ fn search_file_match() {
 fn search_file_no_match() {
 
     let mut result: Vec<u8> = Vec::new();
-    search_file(&PathBuf::from("examples/example.txt"), "rustacean", &mut result);
+    search_file(&PathBuf::from("examples/example.txt"), "rustacean", false, &mut result);
     assert_eq!(result, b"");
 }
 
