@@ -23,4 +23,10 @@ pub struct Cli {
     #[clap(short, long)]
     pub wildcards: Option<bool>,
 
+    /// Enable case insensitive search
+    /// e.g. -i
+    /// e.g. --ignore-case
+    #[clap(short, long)]
+    pub ignore_case: Option<bool>,
+
 }

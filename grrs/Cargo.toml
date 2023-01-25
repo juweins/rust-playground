@@ -15,9 +15,11 @@ edition = "2021"
 clap = { version = "4.0", features = ["derive"] }
 colored = "2.0"
 indicatif = "0.17"
-log = "0.4"
 env_logger = "0.10"
+log = "0.4"
 lipsum = "0.8"
+regex = "1.5"
+
 
 [dev-dependencies]
 assert_cmd = "2.0"

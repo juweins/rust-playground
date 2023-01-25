@@ -9,6 +9,7 @@ use clap::*;
 use log::{info, error};
 use lipsum::lipsum;
 use colored::Colorize;
+use regex::RegexBuilder;
 pub use cli::Cli;
 
 // Takes a path and a pattern and searches for the pattern in the file
@@ -22,6 +23,7 @@ pub fn search_file(args: &Cli) -> (u8, HashMap<u8,String>) {
     let path = &args.path;
     let wildcards = &args.wildcards;
     let output = &args.output;
+    let ignore_case = &args.ignore_case;
 
     info!("Searching for {} in file {}", pattern, path.display());
 
@@ -38,6 +40,7 @@ pub fn search_file(args: &Cli) -> (u8, HashMap<u8,String>) {
         }
         None => Box::new(std::io::stdout()) as Box<dyn Write>,
     };
+
     
     let mut file = std::io::BufReader::new(std::fs::File::open(path).unwrap());
     let mut result: HashMap<u8, String> = HashMap::new();
@@ -54,28 +57,32 @@ pub fn search_file(args: &Cli) -> (u8, HashMap<u8,String>) {
     // Read each line and check if it contains the pattern
     // - If it does, write it to the writer and attach line number and increase count
     while file.read_line(&mut line).unwrap() > 0 {
+
+        // preprocess the line by highlighting the pattern (case insensitive)
+            let re = RegexBuilder::new(pattern)
+            .case_insensitive(ignore_case.is_some())
+            .build().unwrap();
+
         line_number += 1;
         // search each word in the line for the pattern
         for word in line.split_whitespace() {
-            // If wildcards are enabled, check if the word contains the pattern
-            if wildcards.is_some() == true {
-                if word.contains(pattern) == true {
+            if re.is_match(word) {
+                if wildcards.is_some() == true {
+               
                     // Highlight the pattern in the detected line
                     let res_line = line.replace(word, &word.red().to_string());
 
                     result.insert(line_number, res_line);
                     pattern_count += 1;
-                }
-            // If wildcards are not enabled, check if the word is equal to the pattern
-            } else if wildcards.is_none() == true{
-                if word.eq(pattern) {
-                    // Highlight the pattern in the detected line
-                    let res_line = line.replace(word, &word.red().to_string());
-
-                    result.insert(line_number, res_line);
-                    pattern_count += 1;
-                }
+                } else if wildcards.is_none() == true{
+                        // Highlight the pattern in the detected line
+                        let res_line = line.replace(word, &word.red().to_string());
+    
+                        result.insert(line_number, res_line);
+                        pattern_count += 1;
+                    }
             }
+
         }
         line.clear();
     }
@@ -157,13 +164,15 @@ pub fn check_wildcards(wildcards: &Option<bool>) -> bool {
 // - search_file_match: Test if the search_file function returns the correct result
 // - search_file_no_match: Test if the search_file function returns the correct result
 // ----------------------
-// - print_result_match: Test if the print_result function returns the correct result
-// - print_result_no_match: Test if the print_result function returns the correct result
+// - REMOVED: print_result_match: Test if the print_result function returns the correct result
+// - REMOVED: print_result_no_match: Test if the print_result function returns the correct result
 // ----------------------
 // - check_output_true: Test if the check_output function returns true
 // - check_output_false: Test if the check_output function returns false
 // ----------------------
-// TODO: Find a way to make the search_file_match test more readable
+// - check_wildcards_true: Test if the check_wildcards function returns true
+// - check_wildcards_false: Test if the check_wildcards function returns false
+// ----------------------
 #[test]
 fn search_file_match() {
 
@@ -191,3 +200,16 @@ fn check_output_false() {
     let output = None;
     assert_eq!(check_output(&output).is_none(), true);
 }
+
+#[test]
+fn check_wildcards_true() {
+    let wildcards = Some(true);
+    assert_eq!(check_wildcards(&wildcards), true);
+}
+
+#[test]
+fn check_wildcards_false() {
+    let wildcards = None;
+    assert_eq!(check_wildcards(&wildcards), false);
+}
+
