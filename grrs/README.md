@@ -42,7 +42,7 @@ This section lists the features I plan to add to the tool. I will add features a
 
 - [ ] Add support for regex expressions
 - [ ] Add support for invert search
-- [ ] Add support for case-sensitive search
+- [x] Add support for case-sensitive search
 
 #### Cross-Platform Roadmap
 - [ ] Add support for multiple platforms
