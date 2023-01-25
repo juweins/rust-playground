@@ -36,8 +36,8 @@ fn find_content_in_file() -> Result<(), Box<dyn std::error::Error>> {
     cmd.arg("test").arg(file.path());
     cmd.assert()
         .success()
-        .stdout(predicate::str::contains("A \x1b[1;31mtest\x1b[0m"))
-        .stdout(predicate::str::contains("Another \x1b[1;31mtest\x1b[0m"));
+        .stdout(predicate::str::contains("A test"))
+        .stdout(predicate::str::contains("Another test"));
 
     Ok(())
 }

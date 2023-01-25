@@ -2,7 +2,7 @@ use clap::Parser;
 use std::io::Write;
 use log::{info, error};
 
-use grrs::{Cli, search_file, print_result};
+use grrs::{Cli, search_file, print_result, write_result};
 
 
 // Main function
@@ -26,9 +26,9 @@ fn main() {
         }
     }
 
-    let count = search_file(&args);
+    let result = search_file(&args);
 
     // Print the result
-    print_result(count, &args.pattern, std::io::stdout());
+    print_result(result.0, &args.pattern, std::io::stdout());
 
 }
