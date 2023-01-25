@@ -1,3 +1,5 @@
+mod cli;
+
 use clap::*;
 use std::io::Write;
 use log::{info, error};
