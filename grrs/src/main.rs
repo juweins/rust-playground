@@ -1,8 +1,8 @@
-use clap::Parser;
+use clap::*;
 use std::io::Write;
 use log::{info, error};
 
-use grrs::{Cli, search_file, print_result, write_result};
+use grrs::{Cli, search_file, print_result};
 
 
 // Main function
@@ -12,6 +12,7 @@ use grrs::{Cli, search_file, print_result, write_result};
 fn main() {
     // Initialize
     let args = Cli::parse();
+
     env_logger::init();
 
     // check pattern is empty

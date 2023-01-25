@@ -2,16 +2,17 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufRead, Write};
 use std::path::PathBuf;
-use log::{info, warn, error};
+
+use clap::*;
+use log::{info, error};
 use lipsum::lipsum;
-use clap::Parser;
 use colored::Colorize;
 
 
 // Command line arguments
 // - pattern: Pattern to search for
 // - path: Path to the file to search
-#[derive(Parser)]
+#[derive(clap::Parser)]
 pub struct Cli {
 
     /// Pattern to search for in file,
@@ -35,6 +36,7 @@ pub struct Cli {
 
 }
 
+
 // Takes a path and a pattern and searches for the pattern in the file
 // - path: Path to the file to search
 // - pattern: Pattern to search for
@@ -44,7 +46,7 @@ pub fn search_file(args: &Cli) -> (u8, HashMap<u8,String>) {
 
     let pattern = &args.pattern;
     let path = &args.path;
-    let wildcard = &args.wildcards;
+    let wildcards = &args.wildcards;
     let output = &args.output;
 
     info!("Searching for {} in file {}", pattern, path.display());
@@ -82,7 +84,7 @@ pub fn search_file(args: &Cli) -> (u8, HashMap<u8,String>) {
         // search each word in the line for the pattern
         for word in line.split_whitespace() {
             // If wildcards are enabled, check if the word contains the pattern
-            if wildcard.is_some() == true {
+            if wildcards.is_some() == true {
                 if word.contains(pattern) == true {
                     // Highlight the pattern in the detected line
                     let res_line = line.replace(word, &word.red().to_string());
@@ -91,7 +93,7 @@ pub fn search_file(args: &Cli) -> (u8, HashMap<u8,String>) {
                     pattern_count += 1;
                 }
             // If wildcards are not enabled, check if the word is equal to the pattern
-            } else if wildcard.is_some() == false || wildcard.is_none() == true{
+            } else if wildcards.is_none() == true{
                 if word.eq(pattern) {
                     // Highlight the pattern in the detected line
                     let res_line = line.replace(word, &word.red().to_string());
@@ -103,13 +105,13 @@ pub fn search_file(args: &Cli) -> (u8, HashMap<u8,String>) {
         }
         line.clear();
     }
-    write_result(&result, pattern, writer);
+    write_result(&result, writer);
 
     (pattern_count, result)
     
 }
 
-pub fn write_result(result: &HashMap<u8, String>, pattern: &str, mut writer: impl std::io::Write) {
+pub fn write_result(result: &HashMap<u8, String>, mut writer: impl std::io::Write) {
 
     for (key, value) in result { 
         match writeln!(writer, "{}: {}", key.to_string().red(), value) {
