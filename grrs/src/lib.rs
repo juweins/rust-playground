@@ -1,17 +1,66 @@
+use std::fs::File;
 use std::io::{BufRead, Write};
 use std::path::PathBuf;
 use log::{info, warn, error};
 use lipsum::lipsum;
+use clap::Parser;
+
+
+// Command line arguments
+// - pattern: Pattern to search for
+// - path: Path to the file to search
+#[derive(Parser)]
+pub struct Cli {
+
+    /// Pattern to search for in file,
+    /// e.g. amici
+    pub pattern: String,
+
+    /// Path to the file to search,
+    /// e.g. example/example.txt
+    pub path: std::path::PathBuf,
+
+    /// Write the output to a file
+    /// e.g. output.txt
+    #[clap(short, long)]
+    pub output: Option<std::path::PathBuf>,
+
+    /// Enable wildcards
+    /// e.g. -w
+    /// e.g. --wildcards
+    #[clap(short, long)]
+    pub wildcards: Option<bool>,
+
+}
 
 // Takes a path and a pattern and searches for the pattern in the file
 // - path: Path to the file to search
 // - pattern: Pattern to search for
 // - wildcards: If flag is set (true), the pattern will be handled as a wildcard
 // TODO: Find a way to suppress word fragment highlighting in wildcards mode
-pub fn search_file(file: &PathBuf, pattern: &str,wildcards: bool, mut writer: impl std::io::Write) -> u8 {
-    info!("Searching for {} in file {}", pattern, file.display());
+pub fn search_file(args: &Cli) -> u8 {
 
-    let mut result = std::io::BufReader::new(std::fs::File::open(file).unwrap());
+    let pattern = &args.pattern;
+    let path = &args.path;
+    let wildcard = &args.wildcards;
+    let output = &args.output;
+
+    info!("Searching for {} in file {}", pattern, path.display());
+
+
+    let output_writer = check_output(output);
+    // 
+    let mut writer = match output_writer {
+        Some(_) => {
+            let output_path = output.clone().unwrap();
+            Box::new(File::create(output_path).unwrap()) as Box<dyn Write>
+        }
+        None => Box::new(std::io::stdout()) as Box<dyn Write>,
+    };
+    
+    let mut result = std::io::BufReader::new(std::fs::File::open(path).unwrap());
+
+
     let mut line = String::new();
 
     // Count the number of matches (for logging)
@@ -27,7 +76,7 @@ pub fn search_file(file: &PathBuf, pattern: &str,wildcards: bool, mut writer: im
         // search each word in the line for the pattern
         for word in line.split_whitespace() {
             // If wildcards are enabled, check if the word contains the pattern
-            if wildcards == true {
+            if wildcard.is_some() == true {
                 if word.contains(pattern) == true {
                     pattern_count += 1;
                     // Highlight the matching line number and pattern (red)
@@ -38,7 +87,7 @@ pub fn search_file(file: &PathBuf, pattern: &str,wildcards: bool, mut writer: im
                     }
                 }
             // If wildcards are not enabled, check if the word is equal to the pattern
-            } else if wildcards == false{
+            } else if wildcard.is_some() == false || wildcard.is_none() == true{
                 if word.eq(pattern) {
                     // TODO: Suppress subsequent word fragment highlighting in match
                     let line = line.replace(word, &format!("\x1b[1;31m{}\x1b[0m", word));
@@ -92,13 +141,16 @@ pub fn generate_sample_file() {
 
 // check if output is set
 // - If output is set, set Writer to output file
-pub fn check_output(output: &Option<PathBuf>) -> bool {
-    if let Some(output) = output {
-        info!("Output file set to {}", output.display());
-        true
+// - If output is not set, set Writer to stdout
+// return option of writer
+pub fn check_output(output: &Option<PathBuf>) -> Option<File> {
+    if output.is_some() == true{
+        info!("Output file set to {}", output.as_ref().unwrap().display());
+        let writer = std::fs::File::create(output.as_ref().unwrap()).unwrap();
+        Option::Some(writer)
     } else {
         info!("Output file not set");
-        false
+        Option::None
     }
 }
 
@@ -129,18 +181,17 @@ pub fn check_wildcards(wildcards: &Option<bool>) -> bool {
 #[test]
 fn search_file_match() {
 
-    let mut result: Vec<u8> = Vec::new();
-    let count = search_file(&PathBuf::from("examples/example.txt"), "This",false, &mut result);
-    assert_eq!(result, b"\x1b[1;31m1\x1b[0m: \x1b[1;31mThis\x1b[0m text has been generated using lipsum crate:\n\n");
+    let args = Cli::parse_from(&["", "This", "examples/example.txt"]);
+    let count = search_file(&args);
     assert_eq!(count, 1);
 }
 
 #[test]
 fn search_file_no_match() {
 
-    let mut result: Vec<u8> = Vec::new();
-    search_file(&PathBuf::from("examples/example.txt"), "rustacean", false, &mut result);
-    assert_eq!(result, b"");
+    let args = Cli::parse_from(&["", "rustacean", "examples/example.txt"]);
+    let count = search_file(&args);
+    assert_eq!(count, 0);
 }
 
 #[test]
@@ -161,10 +212,12 @@ fn print_result_no_match() {
 
 #[test]
 fn check_output_true() {
-    assert_eq!(check_output(&Some(PathBuf::from("examples/example.txt"))), true);
+    let output = Some(PathBuf::from("examples/output.txt"));
+    assert_eq!(check_output(&output).is_some(), true);
 }
 
 #[test]
 fn check_output_false() {
-    assert_eq!(check_output(&None), false);
+    let output = None;
+    assert_eq!(check_output(&output).is_none(), true);
 }
