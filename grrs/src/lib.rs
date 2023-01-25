@@ -16,9 +16,13 @@ pub use cli::Cli;
 // - path: Path to the file to search
 // - pattern: Pattern to search for
 // - wildcards: If flag is set (true), the pattern will be handled as a wildcard
-// TODO: Find a way to suppress word fragment highlighting in wildcards mode
+// - output: If flag is set (true), the output will be written to a file
+// - ignore_case: If flag is set (true), the search will be case insensitive
+// TODO: Handle options Some(true) and Some(false) differently
+
 pub fn search_file(args: &Cli) -> (u8, HashMap<u8,String>) {
 
+    // Get the arguments
     let pattern = &args.pattern;
     let path = &args.path;
     let wildcards = &args.wildcards;
@@ -32,7 +36,9 @@ pub fn search_file(args: &Cli) -> (u8, HashMap<u8,String>) {
     // - Returns None if not set
     let output_writer = check_output(output);
 
-    // specify the writer depending on flag
+    // Specify the writer depending on flag
+    // - If output flag is set, write to file
+    // - If output flag is not set, write to stdout
     let writer = match output_writer {
         Some(_) => {
             let output_path = output.clone().unwrap();
@@ -41,32 +47,28 @@ pub fn search_file(args: &Cli) -> (u8, HashMap<u8,String>) {
         None => Box::new(std::io::stdout()) as Box<dyn Write>,
     };
 
-    
+    // Initialize the regex builder
+    let regex = RegexBuilder::new(pattern)
+    .case_insensitive(ignore_case.is_some())
+    .build().unwrap();
+
+    // Read the file and initialize the working variables
     let mut file = std::io::BufReader::new(std::fs::File::open(path).unwrap());
     let mut result: HashMap<u8, String> = HashMap::new();
-
     let mut line = String::new();
 
-
-    // Count the number of matches (for logging)
+    // Counting variables (for logging)
     let mut pattern_count = 0;
-
-    // Track the line number
     let mut line_number = 0;
 
     // Read each line and check if it contains the pattern
     // - If it does, write it to the writer and attach line number and increase count
     while file.read_line(&mut line).unwrap() > 0 {
 
-        // preprocess the line by highlighting the pattern (case insensitive)
-            let re = RegexBuilder::new(pattern)
-            .case_insensitive(ignore_case.is_some())
-            .build().unwrap();
-
         line_number += 1;
         // search each word in the line for the pattern
         for word in line.split_whitespace() {
-            if re.is_match(word) {
+            if regex.is_match(word) {
                 if wildcards.is_some() == true {
                
                     // Highlight the pattern in the detected line
@@ -159,7 +161,6 @@ pub fn check_wildcards(wildcards: &Option<bool>) -> bool {
     }
 }
     
-
 // Tests
 // - search_file_match: Test if the search_file function returns the correct result
 // - search_file_no_match: Test if the search_file function returns the correct result
